@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian House Price Prediction Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Phase Toggle Navigation -->
+    <div class="phase-toggle">
+        <div class="container">
+            <div class="phase-tabs">
+                <button class="phase-tab active" id="buyerModeTab" data-mode="buyer">
+                    <i class="fas fa-eye"></i>
+                    Price Vision (Buyer Mode)
+                </button>
+                <button class="phase-tab" id="sellerModeTab" data-mode="seller">
+                    <i class="fas fa-home"></i>
+                    Sell Property (Seller Mode)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-home"></i>
+                    <span>PricePredict India</span>
+                </div>
+                <nav class="nav">
+                    <a href="#" class="nav-link">Home</a>
+                    <a href="#" class="nav-link">About</a>
+                    <a href="#" class="nav-link">Contact</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Price Vision (Buyer Mode) -->
+    <main id="buyerMode" class="main">
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">AI-Powered House Price Prediction for India</h1>
+                        <p class="hero-subtitle">Get accurate, data-driven price predictions for properties across India using advanced machine learning models trained on millions of real estate transactions.</p>
+                        <div class="trust-indicators">
+                            <div class="indicator">
+                                <i class="fas fa-chart-line"></i>
+                                <span>95% Accuracy</span>
+                            </div>
+                            <div class="indicator">
+                                <i class="fas fa-database"></i>
+                                <span>2M+ Properties</span>
+                            </div>
+                            <div class="indicator">
+                                <i class="fas fa-city"></i>
+                                <span>50+ Cities</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="prediction-form-section">
+            <div class="container">
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2>Predict Your Property Value</h2>
+                        <p>Fill in the details below to get an instant price prediction</p>
+                    </div>
+                    
+                    <form id="predictionForm" class="prediction-form">
+                        <div class="form-group">
+                            <label for="houseSize">
+                                <i class="fas fa-ruler-combined"></i>
+                                House Size (square feet)
+                            </label>
+                            <input 
+                                type="number" 
+                                id="houseSize" 
+                                name="houseSize" 
+                                placeholder="Enter house size in sq. ft."
+                                min="200"
+                                max="10000"
+                                required
+                            >
+                            <span class="error-message" id="houseSizeError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bhk">
+                                <i class="fas fa-bed"></i>
+                                Number of Rooms (BHK)
+                            </label>
+                            <select id="bhk" name="bhk" required>
+                                <option value="">Select BHK</option>
+                                <option value="1">1 BHK</option>
+                                <option value="2">2 BHK</option>
+                                <option value="3">3 BHK</option>
+                                <option value="4">4 BHK</option>
+                                <option value="5">5 BHK</option>
+                                <option value="6">6+ BHK</option>
+                            </select>
+                            <span class="error-message" id="bhkError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Location
+                            </label>
+                            <div class="location-input-wrapper">
+                                <input 
+                                    type="text" 
+                                    id="location" 
+                                    name="location" 
+                                    placeholder="Enter city, area, or pincode"
+                                    required
+                                >
+                                <button type="button" class="location-btn" id="locationBtn">
+                                    <i class="fas fa-crosshairs"></i>
+                                </button>
+                            </div>
+                            <div class="location-suggestions" id="locationSuggestions"></div>
+                            <span class="error-message" id="locationError"></span>
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <i class="fas fa-chart-line"></i>
+                            Predict House Prices
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trust & Transparency Note -->
+        <section class="trust-note">
+            <div class="container">
+                <div class="trust-content">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <strong>Trust & Transparency:</strong> All predictions are generated using regression-based machine learning models trained on extensive Indian housing data. Prices are displayed in Indian Rupees (₹) and are for estimation purposes only.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Sell Property (Seller Mode) -->
+    <main id="sellerMode" class="main" style="display: none;">
+        <section class="hero seller-hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">List Your Property for Sale</h1>
+                        <p class="hero-subtitle">Reach millions of potential buyers by providing detailed property information. Complete listings get 3x more views and faster sales.</p>
+                        <div class="trust-indicators">
+                            <div class="indicator">
+                                <i class="fas fa-users"></i>
+                                <span>10M+ Buyers</span>
+                            </div>
+                            <div class="indicator">
+                                <i class="fas fa-bolt"></i>
+                                <span>Fast Sale</span>
+                            </div>
+                            <div class="indicator">
+                                <i class="fas fa-lock"></i>
+                                <span>Secure Platform</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="seller-form-section">
+            <div class="container">
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2>Property Information</h2>
+                        <p>Provide detailed information to attract the right buyers and get accurate price predictions</p>
+                    </div>
+                    
+                    <form id="sellerForm" class="seller-form">
+                        <!-- Basic Property Details -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-home"></i> Basic Property Details</h3>
+                            
+                            <div class="form-group">
+                                <label for="sellerHouseSize">
+                                    <i class="fas fa-ruler-combined"></i>
+                                    Property Size (square feet)
+                                </label>
+                                <input 
+                                    type="number" 
+                                    id="sellerHouseSize" 
+                                    name="sellerHouseSize" 
+                                    placeholder="Enter property size in sq. ft."
+                                    min="200"
+                                    max="10000"
+                                    required
+                                >
+                                <small class="helper-text">Accurate size helps buyers understand the space better</small>
+                                <span class="error-message" id="sellerHouseSizeError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sellerBhk">
+                                    <i class="fas fa-bed"></i>
+                                    Number of Rooms (BHK)
+                                </label>
+                                <select id="sellerBhk" name="sellerBhk" required>
+                                    <option value="">Select BHK</option>
+                                    <option value="1">1 BHK</option>
+                                    <option value="2">2 BHK</option>
+                                    <option value="3">3 BHK</option>
+                                    <option value="4">4 BHK</option>
+                                    <option value="5">5 BHK</option>
+                                    <option value="6">6+ BHK</option>
+                                </select>
+                                <small class="helper-text">Helps buyers filter properties by their requirements</small>
+                                <span class="error-message" id="sellerBhkError"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sellerLocation">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Exact Location Details
+                                </label>
+                                <textarea 
+                                    id="sellerLocation" 
+                                    name="sellerLocation" 
+                                    placeholder="Enter complete address including society name, landmark, area, city, and pincode"
+                                    rows="3"
+                                    required
+                                ></textarea>
+                                <small class="helper-text">Detailed location improves search visibility and buyer confidence</small>
+                                <span class="error-message" id="sellerLocationError"></span>
+                            </div>
+                        </div>
+
+                        <!-- Location Intelligence -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-map"></i> Location Intelligence</h3>
+                            <p class="section-description">Provide nearby amenities to help buyers understand the neighborhood</p>
+                            
+                            <div class="form-group">
+                                <label for="nearbySchools">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    Nearby Schools
+                                </label>
+                                <textarea 
+                                    id="nearbySchools" 
+                                    name="nearbySchools" 
+                                    placeholder="List nearby schools with distance (e.g., Delhi Public School - 0.5 km, National Public School - 1 km)"
+                                    rows="2"
+                                ></textarea>
+                                <small class="helper-text">Schools are crucial for families and increase property value</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="nearbyHospitals">
+                                    <i class="fas fa-hospital"></i>
+                                    Nearby Hospitals
+                                </label>
+                                <textarea 
+                                    id="nearbyHospitals" 
+                                    name="nearbyHospitals" 
+                                    placeholder="List nearby hospitals with distance (e.g., Apollo Hospital - 2 km, Fortis Healthcare - 3 km)"
+                                    rows="2"
+                                ></textarea>
+                                <small class="helper-text">Healthcare accessibility is a key consideration for buyers</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="transportAccess">
+                                    <i class="fas fa-subway"></i>
+                                    Metro / Public Transport Access
+                                </label>
+                                <textarea 
+                                    id="transportAccess" 
+                                    name="transportAccess" 
+                                    placeholder="Describe metro stations, bus stops, railway stations nearby with walking distance"
+                                    rows="2"
+                                ></textarea>
+                                <small class="helper-text">Good connectivity significantly impacts property desirability</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="crimeRate">
+                                    <i class="fas fa-shield-alt"></i>
+                                    Crime Rate Information
+                                </label>
+                                <select id="crimeRate" name="crimeRate">
+                                    <option value="">Select crime rate level</option>
+                                    <option value="very-low">Very Low - Excellent safety</option>
+                                    <option value="low">Low - Good safety</option>
+                                    <option value="moderate">Moderate - Average safety</option>
+                                    <option value="high">High - Needs improvement</option>
+                                </select>
+                                <small class="helper-text">Honest information builds trust with potential buyers</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="shoppingMalls">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    Nearby Shopping Malls
+                                </label>
+                                <textarea 
+                                    id="shoppingMalls" 
+                                    name="shoppingMalls" 
+                                    placeholder="List nearby malls and shopping centers (e.g., Phoenix Mall - 1.5 km, Central Mall - 2 km)"
+                                    rows="2"
+                                ></textarea>
+                                <small class="helper-text">Shopping convenience is important for modern lifestyles</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="waterSupply">
+                                    <i class="fas fa-tint"></i>
+                                    Water Supply Availability
+                                </label>
+                                <select id="waterSupply" name="waterSupply">
+                                    <option value="">Select water supply status</option>
+                                    <option value="24x7">24x7 Water Supply</option>
+                                    <option value="daily">Daily Water Supply</option>
+                                    <option value="alternate">Alternate Days</option>
+                                    <option value="limited">Limited Supply</option>
+                                </select>
+                                <small class="helper-text">Water availability is a critical infrastructure factor</small>
+                            </div>
+                        </div>
+
+                        <!-- Additional Details -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-info-circle"></i> Additional Details</h3>
+                            
+                            <div class="form-group">
+                                <label for="propertyDescription">
+                                    <i class="fas fa-align-left"></i>
+                                    Property Description
+                                </label>
+                                <textarea 
+                                    id="propertyDescription" 
+                                    name="propertyDescription" 
+                                    placeholder="Describe your property's unique features, amenities, condition, age, flooring, parking, etc."
+                                    rows="4"
+                                ></textarea>
+                                <small class="helper-text">Detailed descriptions help buyers visualize living in your property</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="propertyImages">
+                                    <i class="fas fa-camera"></i>
+                                    Property Images
+                                </label>
+                                <input 
+                                    type="file" 
+                                    id="propertyImages" 
+                                    name="propertyImages" 
+                                    multiple
+                                    accept="image/*"
+                                >
+                                <small class="helper-text">Upload high-quality images. Properties with photos get 5x more views</small>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="sellerSubmitBtn">
+                            <i class="fas fa-upload"></i>
+                            List Property for Sale
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trust & Transparency Note -->
+        <section class="trust-note">
+            <div class="container">
+                <div class="trust-content">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>
+                        <strong>Seller Protection:</strong> Your property information is secure and will only be shared with verified buyers. We use AI-powered tools to ensure accurate pricing and maximum visibility.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Results Dashboard -->
+    <main id="resultsPage" class="main results-page" style="display: none;">
+        <div class="container">
+            <div class="results-header">
+                <div class="results-title">
+                    <h1>Property Prediction Results</h1>
+                    <p id="resultsLocation"></p>
+                </div>
+                <button class="back-btn" id="backBtn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Prediction
+                </button>
+            </div>
+
+            <!-- Prediction Insights Panel -->
+            <section class="insights-panel">
+                <div class="insights-header">
+                    <h3><i class="fas fa-brain"></i> AI Price Prediction Insights</h3>
+                </div>
+                <div class="insights-content">
+                    <div class="prediction-summary">
+                        <div class="price-range">
+                            <div class="price-item">
+                                <span class="price-label">Predicted Minimum</span>
+                                <span class="price-value" id="minPrice">₹0</span>
+                            </div>
+                            <div class="price-item">
+                                <span class="price-label">Predicted Maximum</span>
+                                <span class="price-value" id="maxPrice">₹0</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Adjustable Price Slider -->
+                        <div class="price-slider-container">
+                            <label class="slider-label">
+                                <i class="fas fa-sliders-h"></i>
+                                Explore Price Range
+                                <span class="slider-value" id="sliderValue">₹0</span>
+                            </label>
+                            <input type="range" id="priceSlider" class="price-slider" min="0" max="100" value="50">
+                            <div class="slider-labels">
+                                <span>Min</span>
+                                <span>Max</span>
+                            </div>
+                        </div>
+                        
+                        <div class="model-metrics enhanced">
+                            <h4>Model Performance Metrics</h4>
+                            <div class="metrics-grid">
+                                <div class="metric with-tooltip">
+                                    <span class="metric-label">R² Score</span>
+                                    <span class="metric-value">0.94</span>
+                                    <div class="tooltip">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span class="tooltip-text">R² Score of 0.94 means our model explains 94% of the variance in property prices, indicating excellent predictive accuracy.</span>
+                                    </div>
+                                </div>
+                                <div class="metric with-tooltip">
+                                    <span class="metric-label">MSE</span>
+                                    <span class="metric-value">11.7L²</span>
+                                    <div class="tooltip">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span class="tooltip-text">Mean Squared Error of 11.7L² indicates the average squared difference between predicted and actual prices is very low.</span>
+                                    </div>
+                                </div>
+                                <div class="metric with-tooltip">
+                                    <span class="metric-label">MAE</span>
+                                    <span class="metric-value">2.15L</span>
+                                    <div class="tooltip">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span class="tooltip-text">Mean Absolute Error of ₹2.15 Lakhs means our predictions are typically within ±₹2.15 Lakhs of actual prices.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Map and Properties Section -->
+            <div class="map-properties-container">
+                <div class="map-section">
+                    <div id="map" class="map"></div>
+                </div>
+                
+                <div class="properties-section">
+                    <!-- Price Zones -->
+                    <div class="price-zones">
+                        <div class="zone-tabs">
+                            <button class="zone-tab active" data-zone="all">
+                                <i class="fas fa-th"></i>
+                                All Properties
+                            </button>
+                            <button class="zone-tab affordable" data-zone="affordable">
+                                <i class="fas fa-rupee-sign"></i>
+                                Affordable
+                            </button>
+                            <button class="zone-tab mid-range" data-zone="mid-range">
+                                <i class="fas fa-coins"></i>
+                                Mid-Range
+                            </button>
+                            <button class="zone-tab luxury" data-zone="luxury">
+                                <i class="fas fa-gem"></i>
+                                Luxury
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Properties Grid -->
+                    <div class="properties-grid" id="propertiesGrid">
+                        <!-- Property cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>PricePredict India</h4>
+                    <p>India's most trusted AI-powered house price prediction platform</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-envelope"></i> info@pricepredict.in</p>
+                    <p><i class="fas fa-phone"></i> +91 98765 43210</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 PricePredict India. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
